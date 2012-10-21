@@ -12,11 +12,13 @@ if __name__ == '__main__':
 
 
 from datetime import datetime
-import csv
+#import csv
 import argparse
 import textwrap
+
 from simpleodspy.sodsspreadsheet import SodsSpreadSheet
 from simpleodspy.sodsods import SodsOds
+
 from shops.mercadona import Mercadona
 from shops.hipercor import Hipercor
 from shops.eroski import Eroski
@@ -32,19 +34,18 @@ parser = argparse.ArgumentParser(description=textwrap.dedent('''\
 
 credentials_group = parser.add_argument_group('credentials', 'A pair user/password per supermarket')
 for shop_name in ('mercadona', 'hipercor', 'eroski'):
-    credentials_group.add_argument('--' + shop_name, 
-                        nargs=2, 
-                        required=True, 
-                        help=shop_name.capitalize() + ' user/password', 
-                        metavar=('USER', 'PASS'), 
+    credentials_group.add_argument('--' + shop_name,
+                        nargs=2,
+                        required=True,
+                        help=shop_name.capitalize() + ' user/password',
+                        metavar=('USER', 'PASS'),
                         dest=shop_name + '_credentials')
-    
 options_group = parser.add_argument_group('options')
 options_group.add_argument('--output', '-o',
-                    default='shop_list_' + datetime.now().strftime('%Y%m%d_%H%M%S') + '.ods', 
+                    default='shop_list_' + datetime.now().strftime('%Y%m%d_%H%M%S') + '.ods',
                     help='file where comparison will be exported (.ods)',
                     metavar='FILE',
-                    dest='osd_filename')
+                    dest='ods_filename')
 options_group.add_argument('--fake', '-f',
                     action='store_true',
                     help='get data from local html files')
@@ -55,136 +56,134 @@ options_group.add_argument('--version', '-v', action='version', version='%(prog)
 
 args = parser.parse_args()
 
-
-
 shop_list = []
 
-shop_list.append(Mercadona(args.mercadona_credentials[0], args.mercadona_credentials[1], id_lista="12840115", debug=True, verbose=True, fake=args.fake))
-shop_list.append(Hipercor(args.hipercor_credentials[0], args.hipercor_credentials[1], giftListId="gl126585719", debug=True, verbose=True, fake=args.fake))
-shop_list.append(Eroski(args.eroski_credentials[0], args.eroski_credentials[1], idLista="1", debug=True, verbose=True, fake=args.fake))
+shop_list.append(Mercadona(args.mercadona_credentials[0], args.mercadona_credentials[1], id_lista='12840115',
+                           debug=True, verbose=True, fake=args.fake))
+shop_list.append(Hipercor(args.hipercor_credentials[0], args.hipercor_credentials[1], giftListId='gl126585719',
+                          debug=True, verbose=True, fake=args.fake))
+shop_list.append(Eroski(args.eroski_credentials[0], args.eroski_credentials[1], idLista='1',
+                        debug=True, verbose=True, fake=args.fake))
 
 for shop in shop_list:
     shop.gather_products()
 
-#mercadonaWriter = csv.writer(open("mercadona.csv", "wb"))
+#mercadonaWriter = csv.writer(open('mercadona.csv', 'wb'))
 #for product in mercadona_shop.product_dict:
 #    mercadonaWriter.writerow([product.id, product.name, product.price])
-#    
-#hipercorWriter = csv.writer(open("hipercor.csv", "wb"))
+#
+#hipercorWriter = csv.writer(open('hipercor.csv', 'wb'))
 #for product in hipercor_shop.product_dict:
 #    hipercorWriter.writerow([product.id, product.name, product.price])
-#    
-#eroskiWriter = csv.writer(open("eroski.csv", "wb"))
+#
+#eroskiWriter = csv.writer(open('eroski.csv', 'wb'))
 #for product in eroski_shop.product_dict:
 #    eroskiWriter.writerow([product.id, product.name, product.price])
 
-master_product_list = (("Palitos de pan",                       ("82275", "0200253000210", "12584777_2059099")),
-                       ("Agüitas 50cl",                         ("27186", "0200530001007", "5970165_2059275")),
-                       ("Agüitas 33cl",                         ("27065", "0200530001270", "5970132_2059275")),
-                       ("Ensalada 4 estaciones",                ("69706", "0202070301888", "11013562_2058534")),
-                       ("Zanahoria rallada",                    ("69722", "", "11016532_2058534")),
-                       ("Atún en escabeche",                    ("18007", "0200106100092", "900782_2058535")),
-                       ("Aceitunas rellenas",                   ("33071", "0200440800357", "4534228_2058537")),
-                       ("Aceitunas rellenas suaves",            ("", "0200440800365", "4944799_2058537")),
-                       ("Taquitos de pavo",                     ("59222", "0201030800187", "9160219_2058531")),
-                       ("Espárragos",                           ("18562", "0200123700932", "4288437_2058535")),
-                       ("Cebolla frita",                        ("34104", "0200129900791", "14364996_2058535")),
-                       ("Huevos cocidos",                       ("31303", "", "")),
-                       ("Pepinillos",                           ("33184", "0200440900231", "945469_2058537")),
-                       ("Cebolletas",                           ("33141", "0200440700961", "945519_2058537")),
-                       ("Pizza",                                ("63573", "0201050400199", "505677_2058534")),
-                       ("Pato WC",                              ("43401", "0201415401767", "14209100_2058542")),
-                       ("Pato WC recambio",                     ("43410", "0201415401890", "")),
-                       ("ColaCao",                              ("", "0200246400147", "10372803_2058536")),
-                       ("Leche Gaza",                           ("", "0200412200099", "137760_2058532")),
-                       ("Leche Tierra de sabor",                ("10114", "0200412200461", "15132368_2058532")),
-                       ("Cereales crunchy",                     ("", "0200241600105", "833616_2058536")),
-                       ("Cereales All bran chocolate",          ("9336", "0200234100063", "3334406_2058536")),
-                       ("Cereales Fitness Miel-Almendra",       ("", "0200234100923", "13319157_2058536")),
-                       ("Cereales Fitness chocolate negro",     ("9300", "0200234100659", "10873545_2058536")),
-                       ("Cereales Muesli chocolate",            ("9200", "0200206300667", "733923_2058536")),
-                       ("Cereales Golden Grahams",              ("", "0200241600360", "300954_2058536")),
-                       ("Cereales All bran flakes",             ("", "0200234100501", "")),
-                       ("Aquarius libre",                       ("", "0200523901536", "13148630_2059275")),
-                       ("Lemon&Nada",                           ("27544", "0200512100694", "10296796_2059275")),
-                       ("Frutos secos Mr.Corn",                 ("", "0200477800569", "14297857_2058537")),
-                       ("Huevos",                               ("31310", "0201040100677", "11148202_2058532")),
-                       ("Pan de molde",                         ("82369", "0200254801194", "305540_2058536")),
-                       ("Jamón lonchas",                        ("59157", "0201030700221", "10868024_2058531")),
-                       ("Pavo lonchas",                         ("56003", "0201030800146", "7058209_2058531")),
-                       ("Queso lonchas light",                  ("51153", "0201025200849", "9732306_2058531")),
-                       ("Mermelada Vieja Fábrica",              ("", "0200205401292", "607952_2058536")),
-                       ("Mermelada light",                      ("15060", "0200205402209", "")),
-                       ("Naranjas",                             ("3213", "0202056702059", "")),
-                       ("Cerveza con limón",                    ("27387", "0200505501577", "13252192_2059275")),
-                       ("Yogur Sveltesse Duo",                  ("", "0201020400501", "9733064_2058532")),
-                       ("Yogur Sveltesse Cerezas",              ("", "0201020400980", "8473878_2058532")),
-                       ("Actimel 0%",                           ("20656", "0201023200742", "8932279_2058532")),
-                       ("Yogur Hacendado",                      ("20315", "", "")),
-                       ("Vinagre",                              ("4953", "0200402100382", "8381881_2058535")),
-                       ("Arena Attractive",                     ("", "0204850500143", "12170643_2058543")),
-                       ("Arena Friskies Crystal Bend",          ("", "", "11005162_2058543")),
-                       ("Arena Purina tidy cats",               ("", "0204850500200", "")),
-                       ("Toallitas WC",                         ("47816", "0201422101202", "9771072_2058542")),
-                       ("Papel higiénico",                      ("47824", "0201422101772", "12896130_2058542")),
-                       ("Papel de cocina",                      ("49619", "0201422200863", "14339881_2058542")),
-                       ("Servilletas",                          ("47611", "0201422304178", "8710691_2058542")),
-                       ("Espuma de afeitar",                    ("73510", "0201550100125", "14393912_2059465")),
-                       ("Cuchillas Gillette Fusion 8 unid",     ("", "0201550700486", "9475609_2059465")),
-                       ("Cuchillas Gillette Fusion 4 unid",     ("73013", "0201550700478", "")),
-                       ("Gel Sanex Zero",                       ("45516", "0201554200624", "12079844_2059465")),
-                       ("Gel Sanex Zero Recambio",              ("", "0201554200681", "13796180_2059465")),
-                       ("Champú H&S Mentol",                    ("45870", "0201540300033", "932835_2059465")),
-                       ("After shave Nivea balsam sensitive",   ("73850", "0201550800120", "710087_2059465")),
-                       ("Desodorante Rexona",                   ("", "0201555100039", "3912284_2059465")),
-                       ("Desodorante Sanex",                    ("45078", "0201555101805", "6833149_2059465")),
-                       ("Pilas recargables AA",                 ("93442", "0202310200601", "12165205_2058542")),
-                       ("Pilas recargables AAA",                ("", "0202310200619", "12165361_2058542")),
-                       ("Jabón rosa",                           ("40805", "0201410303158", "14369573_2058542")),
-                       ("Ariel",                                ("40672", "0201410303885", "14369029_2058542"))
+master_product_list = (('Palitos de pan',                       ('82275', '0200253000210', '12584777_2059099')),
+                       ('Agüitas 50cl',                         ('27186', '0200530001007', '5970165_2059275')),
+                       ('Agüitas 33cl',                         ('27065', '0200530001270', '5970132_2059275')),
+                       ('Ensalada 4 estaciones',                ('69706', '0202070301888', '11013562_2058534')),
+                       ('Zanahoria rallada',                    ('69722', '', '11016532_2058534')),
+                       ('Atún en escabeche',                    ('18007', '0200106100092', '900782_2058535')),
+                       ('Aceitunas rellenas',                   ('33071', '0200440800357', '4534228_2058537')),
+                       ('Aceitunas rellenas suaves',            ('', '0200440800365', '4944799_2058537')),
+                       ('Taquitos de pavo',                     ('59222', '0201030800187', '9160219_2058531')),
+                       ('Espárragos',                           ('18562', '0200123700932', '4288437_2058535')),
+                       ('Cebolla frita',                        ('34104', '0200129900791', '14364996_2058535')),
+                       ('Huevos cocidos',                       ('31303', '', '')),
+                       ('Pepinillos',                           ('33184', '0200440900231', '945469_2058537')),
+                       ('Cebolletas',                           ('33141', '0200440700961', '945519_2058537')),
+                       ('Pizza',                                ('63573', '0201050400199', '505677_2058534')),
+                       ('Pato WC',                              ('43401', '0201415401767', '14209100_2058542')),
+                       ('Pato WC recambio',                     ('43410', '0201415401890', '')),
+                       ('ColaCao',                              ('', '0200246400147', '10372803_2058536')),
+                       ('Leche Gaza',                           ('', '0200412200099', '137760_2058532')),
+                       ('Leche Tierra de sabor',                ('10114', '0200412200461', '15132368_2058532')),
+                       ('Cereales crunchy',                     ('', '0200241600105', '833616_2058536')),
+                       ('Cereales All bran chocolate',          ('9336', '0200234100063', '3334406_2058536')),
+                       ('Cereales Fitness Miel-Almendra',       ('', '0200234100923', '13319157_2058536')),
+                       ('Cereales Fitness chocolate negro',     ('9300', '0200234100659', '10873545_2058536')),
+                       ('Cereales Muesli chocolate',            ('9200', '0200206300667', '733923_2058536')),
+                       ('Cereales Golden Grahams',              ('', '0200241600360', '300954_2058536')),
+                       ('Cereales All bran flakes',             ('', '0200234100501', '')),
+                       ('Aquarius libre',                       ('', '0200523901536', '13148630_2059275')),
+                       ('Lemon&Nada',                           ('27544', '0200512100694', '10296796_2059275')),
+                       ('Frutos secos Mr.Corn',                 ('', '0200477800569', '14297857_2058537')),
+                       ('Huevos',                               ('31310', '0201040100677', '11148202_2058532')),
+                       ('Pan de molde',                         ('82369', '0200254801194', '305540_2058536')),
+                       ('Jamón lonchas',                        ('59157', '0201030700221', '10868024_2058531')),
+                       ('Pavo lonchas',                         ('56003', '0201030800146', '7058209_2058531')),
+                       ('Queso lonchas light',                  ('51153', '0201025200849', '9732306_2058531')),
+                       ('Mermelada Vieja Fábrica',              ('', '0200205401292', '607952_2058536')),
+                       ('Mermelada light',                      ('15060', '0200205402209', '')),
+                       ('Naranjas',                             ('3213', '0202056702059', '')),
+                       ('Cerveza con limón',                    ('27387', '0200505501577', '13252192_2059275')),
+                       ('Yogur Sveltesse Duo',                  ('', '0201020400501', '9733064_2058532')),
+                       ('Yogur Sveltesse Cerezas',              ('', '0201020400980', '8473878_2058532')),
+                       ('Actimel 0%',                           ('20656', '0201023200742', '8932279_2058532')),
+                       ('Yogur Hacendado',                      ('20315', '', '')),
+                       ('Vinagre',                              ('4953', '0200402100382', '8381881_2058535')),
+                       ('Arena Attractive',                     ('', '0204850500143', '12170643_2058543')),
+                       ('Arena Friskies Crystal Bend',          ('', '', '11005162_2058543')),
+                       ('Arena Purina tidy cats',               ('', '0204850500200', '')),
+                       ('Toallitas WC',                         ('47816', '0201422101202', '9771072_2058542')),
+                       ('Papel higiénico',                      ('47824', '0201422101772', '12896130_2058542')),
+                       ('Papel de cocina',                      ('49619', '0201422200863', '14339881_2058542')),
+                       ('Servilletas',                          ('47611', '0201422304178', '8710691_2058542')),
+                       ('Espuma de afeitar',                    ('73510', '0201550100125', '14393912_2059465')),
+                       ('Cuchillas Gillette Fusion 8 unid',     ('', '0201550700486', '9475609_2059465')),
+                       ('Cuchillas Gillette Fusion 4 unid',     ('73013', '0201550700478', '')),
+                       ('Gel Sanex Zero',                       ('45516', '0201554200624', '12079844_2059465')),
+                       ('Gel Sanex Zero Recambio',              ('', '0201554200681', '13796180_2059465')),
+                       ('Champú H&S Mentol',                    ('45870', '0201540300033', '932835_2059465')),
+                       ('After shave Nivea balsam sensitive',   ('73850', '0201550800120', '710087_2059465')),
+                       ('Desodorante Rexona',                   ('', '0201555100039', '3912284_2059465')),
+                       ('Desodorante Sanex',                    ('45078', '0201555101805', '6833149_2059465')),
+                       ('Pilas recargables AA',                 ('93442', '0202310200601', '12165205_2058542')),
+                       ('Pilas recargables AAA',                ('', '0202310200619', '12165361_2058542')),
+                       ('Jabón rosa',                           ('40805', '0201410303158', '14369573_2058542')),
+                       ('Ariel',                                ('40672', '0201410303885', '14369029_2058542'))
                       )
 
 
 COLS_PER_PRODUCT = 4
 table = SodsSpreadSheet(len(master_product_list), 1 + COLS_PER_PRODUCT * len(shop_list))
 # Set column widths
-table.setAt(0, 1, column_width="170pt")
+table.setAt(0, 1, column_width='170pt')
 for i in range(len(shop_list)):
-    table.setAt(0, i * COLS_PER_PRODUCT + 2, column_width="400pt")
-    table.setAt(0, i * COLS_PER_PRODUCT + 3, column_width="50pt")
-    table.setAt(0, i * COLS_PER_PRODUCT + 4, column_width="50pt")
-    table.setAt(0, i * COLS_PER_PRODUCT + 5, column_width="50pt")
+    table.setAt(0, i * COLS_PER_PRODUCT + 2, column_width='400pt')
+    table.setAt(0, i * COLS_PER_PRODUCT + 3, column_width='50pt')
+    table.setAt(0, i * COLS_PER_PRODUCT + 4, column_width='50pt')
+    table.setAt(0, i * COLS_PER_PRODUCT + 5, column_width='50pt')
 
 for row, master_product in enumerate(master_product_list):
     row_str = str(row + 1)
-    table.setValue("A" + row_str, master_product[0])
-    
+    table.setValue('A' + row_str, master_product[0])
+
     min_args = []
     for i in range(len(shop_list)):
-        min_args.append("[.$" + chr(65 + i * COLS_PER_PRODUCT + 3) + "$" + row_str + "]")
-    min_formula = "MIN(" + ";".join(min_args) + ")"
-    
+        min_args.append('[.$' + chr(65 + i * COLS_PER_PRODUCT + 3) + '$' + row_str + ']')
+    min_formula = 'MIN(' + ';'.join(min_args) + ')'
+
     for col, product_id in enumerate(master_product[1]):
         product = shop_list[col].get_product(product_id)
         if product is not None:
-            formula = "is-true-formula([.$" + chr(65 + col * COLS_PER_PRODUCT + 3) + "$" + row_str + "]=" + min_formula + ")"
+            formula = 'is-true-formula([.$' + chr(65 + col * COLS_PER_PRODUCT + 3) +\
+                                        '$' + row_str + ']=' + min_formula + ')'
             table.setValue(chr(65 + col * COLS_PER_PRODUCT + 1) + row_str, product.name)
             table.setValue(chr(65 + col * COLS_PER_PRODUCT + 2) + row_str, product.price)
-            table.setStyle(chr(65 + col * COLS_PER_PRODUCT + 2) + row_str, format="#.##0,00")
+            table.setStyle(chr(65 + col * COLS_PER_PRODUCT + 2) + row_str, format='#.##0,00')
             table.setValue(chr(65 + col * COLS_PER_PRODUCT + 3) + row_str, product.unitary_price)
-            table.setStyle(chr(65 + col * COLS_PER_PRODUCT + 3) + row_str, format="#.##0,00")
-            table.setValue(chr(65 + col * COLS_PER_PRODUCT + 4) + row_str, "€/" + product.unit)
-            
+            table.setStyle(chr(65 + col * COLS_PER_PRODUCT + 3) + row_str, format='#.##0,00')
+            table.setValue(chr(65 + col * COLS_PER_PRODUCT + 4) + row_str, '€/' + product.unit)
+
             # Set conditional formatting to the whole product (only if unitary price is not zero)
             if product.unitary_price > 0.0:
-                table.setStyle(chr(65 + col * COLS_PER_PRODUCT + 1) + row_str + ":" + chr(65 + col * COLS_PER_PRODUCT + 4) + row_str, 
-                               condition=formula, condition_background_color="#ffff99")
-    
+                table.setStyle(chr(65 + col * COLS_PER_PRODUCT + 1) + row_str + ':' +
+                               chr(65 + col * COLS_PER_PRODUCT + 4) + row_str,
+                               condition=formula, condition_background_color='#ffff99')
 
-table.setStyle("A1:" + chr(65 + COLS_PER_PRODUCT * len(shop_list)) + str(len(master_product_list)), font_size="10pt")
+table.setStyle('A1:' + chr(65 + COLS_PER_PRODUCT * len(shop_list)) + str(len(master_product_list)), font_size='10pt')
 
 SodsOds(table).save(args.ods_filename)
-
-    
-
-
