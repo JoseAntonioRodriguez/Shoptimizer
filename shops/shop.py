@@ -7,12 +7,8 @@ Created on 15/07/2012
 '''
 
 import abc
-from collections import namedtuple
 #import requests
 #import lxml.html
-
-
-Product = namedtuple('Product', 'id, name, price, unitary_price, unit')
 
 
 class Shop(object):
@@ -80,8 +76,7 @@ class Shop(object):
         self.product_dict[product.id] = product
 
         if self.verbose:
-            print ' - '.join([product.id, product.name, '{0:.2f} €'.format(product.price),
-                              '[ {0:.2f} €/{1} ]'.format(product.unitary_price, product.unit)])
+            print product
 
     def get_product(self, product_id):
         return self.product_dict.get(product_id)

@@ -10,7 +10,8 @@ import re
 import requests
 import lxml.html
 
-from shop import Shop, Product
+from shop import Shop
+from product import Product
 
 
 class Eroski(Shop):

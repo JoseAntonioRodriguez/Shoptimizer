@@ -10,7 +10,8 @@ import re
 import requests
 import lxml.html
 
-from shop import Shop, Product
+from shop import Shop
+from product import Product
 
 
 class Mercadona(Shop):
@@ -42,7 +43,7 @@ class Mercadona(Shop):
         elif unit == '1 LAVADO':
             return unitary_price, 'dosis'
         else:
-            raise ValueError('Non recognized measurement unit') 
+            raise ValueError('Non recognized measurement unit')
 
     def get_unitary_price(self, price, name):
         '''
