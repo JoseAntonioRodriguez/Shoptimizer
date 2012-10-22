@@ -47,9 +47,6 @@ options_group.add_argument('--output', '-o',
                     help='file where comparison will be exported (.ods)',
                     metavar='FILE',
                     dest='ods_filename')
-options_group.add_argument('--fake', '-f',
-                    action='store_true',
-                    help='get data from local html files')
 options_group.add_argument('--help', '-h',
                     action='help',
                     help='show this help message and exit')
@@ -60,11 +57,11 @@ args = parser.parse_args()
 shop_list = []
 
 shop_list.append(Mercadona(args.mercadona_info[0], args.mercadona_info[1], list_name=args.mercadona_info[2],
-                           debug=True, verbose=True, fake=args.fake))
+                           debug=True, verbose=True, fake=False))
 shop_list.append(Hipercor(args.hipercor_info[0], args.hipercor_info[1], list_name=args.hipercor_info[2],
-                          debug=True, verbose=True, fake=args.fake))
+                          debug=True, verbose=True, fake=False))
 shop_list.append(Eroski(args.eroski_info[0], args.eroski_info[1], list_name=args.eroski_info[2],
-                        debug=True, verbose=True, fake=args.fake))
+                        debug=True, verbose=True, fake=False))
 
 for shop in shop_list:
     shop.gather_products()
