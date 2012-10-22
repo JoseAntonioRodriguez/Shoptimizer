@@ -12,7 +12,6 @@ if __name__ == '__main__':
 
 
 from datetime import datetime
-#import csv
 import argparse
 import textwrap
 
@@ -47,6 +46,10 @@ options_group.add_argument('--output', '-o',
                     help='file where comparison will be exported (.ods)',
                     metavar='FILE',
                     dest='ods_filename')
+options_group.add_argument('--export-csv', '-e',
+                    action='store_true',
+                    help='export shopping lists as csv files',
+                    dest='export_csv')
 options_group.add_argument('--help', '-h',
                     action='help',
                     help='show this help message and exit')
@@ -57,26 +60,18 @@ args = parser.parse_args()
 shop_list = []
 
 shop_list.append(Mercadona(args.mercadona_info[0], args.mercadona_info[1], list_name=args.mercadona_info[2],
-                           debug=True, verbose=True, fake=False))
+                           debug=True, verbose=True, fake=True))
 shop_list.append(Hipercor(args.hipercor_info[0], args.hipercor_info[1], list_name=args.hipercor_info[2],
-                          debug=True, verbose=True, fake=False))
+                          debug=True, verbose=True, fake=True))
 shop_list.append(Eroski(args.eroski_info[0], args.eroski_info[1], list_name=args.eroski_info[2],
-                        debug=True, verbose=True, fake=False))
+                        debug=True, verbose=True, fake=True))
 
 for shop in shop_list:
     shop.gather_products()
 
-#mercadonaWriter = csv.writer(open('mercadona.csv', 'wb'))
-#for product in mercadona_shop.product_dict:
-#    mercadonaWriter.writerow([product.id, product.name, product.price])
-#
-#hipercorWriter = csv.writer(open('hipercor.csv', 'wb'))
-#for product in hipercor_shop.product_dict:
-#    hipercorWriter.writerow([product.id, product.name, product.price])
-#
-#eroskiWriter = csv.writer(open('eroski.csv', 'wb'))
-#for product in eroski_shop.product_dict:
-#    eroskiWriter.writerow([product.id, product.name, product.price])
+if args.export_csv:
+    for shop in shop_list:
+        shop.export_csv()
 
 master_product_list = (('Palitos de pan',                       ('82275', '0200253000210', '12584777_2059099')),
                        ('Agüitas 50cl',                         ('27186', '0200530001007', '5970165_2059275')),

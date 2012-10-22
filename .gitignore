@@ -1,4 +1,5 @@
 *.ods
+*.csv
 
 *.py[co]
 

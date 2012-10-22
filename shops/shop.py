@@ -7,6 +7,8 @@ Created on 15/07/2012
 '''
 
 import abc
+import csv
+from datetime import datetime
 #import requests
 #import lxml.html
 
@@ -80,3 +82,16 @@ class Shop(object):
 
     def get_product(self, product_id):
         return self.product_dict.get(product_id)
+
+    def export_csv(self, filename=None):
+        '''
+        Export product_dict as a csv file
+        '''
+
+        if filename is None:
+            filename = 'data/' + self.__class__.__name__ + '_' + datetime.now().strftime('%Y%m%d_%H%M%S') + '.csv'
+
+        with open(filename, 'wb') as csvfile:
+            writer = csv.writer(csvfile)
+            for product in self.product_dict.values():
+                writer.writerow([product.id, product.name, product.price])
