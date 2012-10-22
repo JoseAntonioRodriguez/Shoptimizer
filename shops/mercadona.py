@@ -19,7 +19,7 @@ class Mercadona(Shop):
     Mercadona crawler
     '''
 
-    def __init__(self, username, password, id_lista, debug=False, verbose=False, fake=False):
+    def __init__(self, username, password, list_name, debug=False, verbose=False, fake=False):
         '''
         Constructor
         '''
@@ -27,7 +27,7 @@ class Mercadona(Shop):
         Shop.__init__(self, debug, verbose, fake)
         self.username = username
         self.password = password
-        self.id_lista = id_lista
+        self.list_name = list_name
 
     def normalize_unitary_price(self, unitary_price, unit):
         if unit == '1 KILO':
@@ -87,8 +87,16 @@ class Mercadona(Shop):
         resp = session.post('https://www.mercadona.es/ns/entrada.php', data=form_params)
         self.log(resp)
 
-        resp = session.get('https://www.mercadona.es/sfprincipal.php?page=sflista&id_padre=&id_seccion=&id_lista=' +
-                           self.id_lista + '&ind=0')  # 12840115
+        resp = session.get('https://www.mercadona.es/sfprincipal.php?'
+                           'page=&id_padre=&id_seccion=&id_lista=&ind=&busc_ref=&busc_marca=&pedido=&tab=1')
+        self.log(resp)
+        html_tree = lxml.html.fromstring(resp.text, parser=lxml.html.HTMLParser(encoding='utf-8'))
+        try:
+            url = html_tree.xpath("//table[@id='tblListas']//a[text()='" + self.list_name + "']")[0].attrib['href']
+        except:
+            raise ValueError('List name "' + self.list_name + '" not found')
+
+        resp = session.get('https://www.mercadona.es/' + url)
         self.log(resp)
 
         return resp.text

@@ -19,7 +19,7 @@ class Eroski(Shop):
     Eroski crawler
     '''
 
-    def __init__(self, username, password, idLista, debug=False, verbose=False, fake=False):
+    def __init__(self, username, password, list_name, debug=False, verbose=False, fake=False):
         '''
         Constructor
         '''
@@ -27,7 +27,7 @@ class Eroski(Shop):
         Shop.__init__(self, debug, verbose, fake)
         self.username = username
         self.password = password
-        self.idLista = idLista
+        self.list_name = list_name
 
     def get_unitary_price(self, price, name, category):
         '''
@@ -98,8 +98,17 @@ class Eroski(Shop):
                             data=form_params, allow_redirects=False)
         self.log(resp)
 
-        resp = session.get('http://www.compraonline.grupoeroski.com/ecoventa/actions/mostrarListaHabitual.do?'
-                           'idLista=' + self.idLista)  # 1
+        resp = session.get('http://www.compraonline.grupoeroski.com/ecoventa/actions/mostrarListaHabitualUsuario.do')
+        self.log(resp)
+
+        html_tree = lxml.html.fromstring(resp.text, parser=lxml.html.HTMLParser(encoding='utf-8'))
+        try:
+            url = html_tree.xpath("//div[@id='divListas']//"
+                                  "a[text()='- " + self.list_name + "']")[0].attrib['href']
+        except:
+            raise ValueError('List name "' + self.list_name + '" not found')
+
+        resp = session.get('http://www.compraonline.grupoeroski.com' + url.strip())
         self.log(resp)
 
         return resp.text

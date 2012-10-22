@@ -19,7 +19,7 @@ class Hipercor(Shop):
     Hipercor crawler
     '''
 
-    def __init__(self, username, password, giftListId, debug=False, verbose=False, fake=False):
+    def __init__(self, username, password, list_name, debug=False, verbose=False, fake=False):
         '''
         Constructor
         '''
@@ -27,7 +27,7 @@ class Hipercor(Shop):
         Shop.__init__(self, debug, verbose, fake)
         self.username = username
         self.password = password
-        self.giftListId = giftListId
+        self.list_name = list_name
 
     def normalize_unitary_price(self, unitary_price, unit):
         if unit == 'Kilo':
@@ -129,10 +129,18 @@ class Hipercor(Shop):
         #resp = session.get(resp.headers['Location'], allow_redirects = False)
         #resp = session.get(resp.headers['Location'], allow_redirects = False)
         #resp = session.get(resp.headers['Location'], allow_redirects = False)
-        #resp = session.get('http://www.hipercor.es/hipercor/sm2/wishlist/wishListView.jsp')
 
-        resp = session.get('http://www.hipercor.es/hipercor/sm2/wishlist/wishList.jsp?giftListId=' +
-                           self.giftListId)  # gl126585719
+        resp = session.get('http://www.hipercor.es/hipercor/sm2/wishlist/wishListView.jsp')
+        self.log(resp)
+
+        html_tree = lxml.html.fromstring(resp.text, parser=lxml.html.HTMLParser(encoding='utf-8'))
+        try:
+            url = html_tree.xpath("//div[@id='contenedor_popup_desplegable_mislistas']//"
+                                  "a[span[text()='" + self.list_name + "']]")[0].attrib['href']
+        except:
+            raise ValueError('List name "' + self.list_name + '" not found')
+
+        resp = session.get('http://www.hipercor.es/' + url)
         self.log(resp)
 
         return resp.text
