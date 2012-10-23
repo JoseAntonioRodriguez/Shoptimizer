@@ -24,7 +24,7 @@ class Eroski(Shop):
         Constructor
         '''
 
-        Shop.__init__(self, debug, verbose, fake)
+        Shop.__init__(self, debug=debug, verbose=verbose, fake=fake)
         self.username = username
         self.password = password
         self.list_name = list_name

@@ -9,8 +9,6 @@ Created on 15/07/2012
 import abc
 import csv
 from datetime import datetime
-#import requests
-#import lxml.html
 
 
 class Shop(object):
@@ -20,11 +18,14 @@ class Shop(object):
 
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, debug=False, verbose=False, fake=False):
+    def __init__(self, name=None, debug=False, verbose=False, fake=False):
         '''
         Constructor
         '''
 
+        self.name = name
+        if self.name is None:
+            self.name = self.__class__.__name__
         self.debug = debug
         self.verbose = verbose
         self.fake = fake
@@ -35,7 +36,7 @@ class Shop(object):
         Print resp content
         '''
 
-        if self.debug:
+        if self.verbose:
             print 'Status Code: ', resp.status_code
             #print '       Body: ', resp.text
             print '    History: ', resp.history
@@ -89,7 +90,7 @@ class Shop(object):
         '''
 
         if filename is None:
-            filename = 'data/' + self.__class__.__name__ + '_' + datetime.now().strftime('%Y%m%d_%H%M%S') + '.csv'
+            filename = 'data/' + self.name + '_' + datetime.now().strftime('%Y%m%d_%H%M%S') + '.csv'
 
         with open(filename, 'wb') as csvfile:
             writer = csv.writer(csvfile)
