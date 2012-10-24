@@ -13,6 +13,7 @@ from datetime import datetime
 import argparse
 import textwrap
 import csv
+import os
 
 from simpleodspy.sodsspreadsheet import SodsSpreadSheet
 from simpleodspy.sodsods import SodsOds
@@ -114,14 +115,20 @@ def main():
     # Parse CLI arguments
     args = parse_args()
 
-    # Create a list of
+    # Create a list of supermarket objects
+    try:
+        fake = os.environ["SHOPTIMIZER_FAKE"]
+        fake = fake.split(';')
+    except:
+        fake = []
+
     shop_list = []
     shop_list.append(Mercadona(username=args.mercadona_info[0], password=args.mercadona_info[1],
-                               list_name=args.mercadona_info[2], debug=True, verbose=True, fake=True))
+                               list_name=args.mercadona_info[2], debug=True, verbose=True, fake='mercadona' in fake))
     shop_list.append(Hipercor(username=args.hipercor_info[0], password=args.hipercor_info[1],
-                              list_name=args.hipercor_info[2], debug=True, verbose=True, fake=True))
+                              list_name=args.hipercor_info[2], debug=True, verbose=True, fake='hipercor' in fake))
     shop_list.append(Eroski(username=args.eroski_info[0], password=args.eroski_info[1],
-                            list_name=args.eroski_info[2], debug=True, verbose=True, fake=True))
+                            list_name=args.eroski_info[2], debug=True, verbose=True, fake='eroski' in fake))
 
     # Do the crawling
     for shop in shop_list:
