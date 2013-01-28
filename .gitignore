@@ -1,6 +1,7 @@
 *.ods
 *.csv
 !master_shopping_list.csv
+*.sh
 
 *.py[co]
 
