@@ -158,6 +158,7 @@ class Hipercor(Shop):
             product_id = product_id[len(product_id) - 2]
 
             product_name = product_item.xpath(".//div[@class='cart_product_txt']/h3/a/span")[0].text
+            product_name = product_name.encode('utf-8')
 
             product_price = float(product_item.xpath(".//p[@class='ahora']/span")[0].text.strip().\
                                   partition(' ')[0].replace(',', '.'))

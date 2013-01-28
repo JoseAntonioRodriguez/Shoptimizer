@@ -113,6 +113,7 @@ class Mercadona(Shop):
             product_id = product_item.xpath("./td[4]/input/@value")[0].partition(';')[0]
 
             product_name = product_item.xpath("./td[1]//label")[0].text.replace(' ***LE RECOMENDAMOS***', '')
+            product_name = product_name.encode('utf-8')
 
             product_price = float(product_item.xpath("./td[2]/span")[0].text.partition(' ')[0].replace(',', '.'))
 

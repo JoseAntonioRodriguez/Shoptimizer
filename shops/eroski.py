@@ -134,6 +134,7 @@ class Eroski(Shop):
             product_id = product_id.partition('_')[2]
             product_name = product_item.xpath(base_xpath + "/tr/td/table/tr/td[@class='menu_sup11']")[0].\
                                               text_content().strip()
+            product_name = product_name.encode('utf-8')
             product_price = float(product_item.xpath(base_xpath +
                                                      "/tr[3]/td/table/tr/td[@class='menu_12_rojo_sin']/strong")[0].\
                                                      text.partition(' ')[0].replace(',', '.'))
