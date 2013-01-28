@@ -1,21 +1,18 @@
 # -*- coding: utf-8 -*-
 
-'''
-Created on 21/10/2012
+"""
+shops.product
+~~~~~~~~~~~~~
 
-@author: jarf
-'''
+This module contains the class representing a product.
+
+"""
 
 
 class Product(object):
-    '''
-    classdocs
-    '''
+    """Class representing a product."""
 
     def __init__(self, id_, name, price=None, unitary_price=None, unit=None):
-        '''
-        Constructor
-        '''
         self.id = id_
         self.name = name
         self.price = price
