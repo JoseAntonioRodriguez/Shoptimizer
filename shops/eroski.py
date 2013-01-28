@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
-'''
-Created on 15/07/2012
+"""
+shops.eroski
+~~~~~~~~~~~~
 
-@author: jarf
-'''
+This module contains the class implementing the crawler for Eroski.
+
+"""
 
 import re
 import requests
@@ -15,24 +17,18 @@ from product import Product
 
 
 class Eroski(Shop):
-    '''
-    Eroski crawler
-    '''
+    """Eroski crawler"""
 
     def __init__(self, username, password, list_name, debug=False, verbose=False, fake=False):
-        '''
-        Constructor
-        '''
-
         Shop.__init__(self, debug=debug, verbose=verbose, fake=fake)
+        # Credentials to access to the shop
         self.username = username
         self.password = password
+        # Name of the product's list to be parsed as named in the server
         self.list_name = list_name
 
     def get_unitary_price(self, price, name, category):
-        '''
-        Try to get the units, weight, capacity, etc. from the product name and calculate the unitary price
-        '''
+        """Try to get the units, weight, capacity, etc. from the product name and calculate the unitary price"""
 
         result = re.search(r'.* ((?:\d+[x+])?\d+(?:,\d+)?) (g|litro|cl|ml|rollos|unid\.|kg|dosis)', name)
         try:
@@ -70,12 +66,10 @@ class Eroski(Shop):
         else:
             raise ValueError('Non recognized measurement unit')
 
-        return round(round(unitary_price, 4), 2), unit
+        return round(round(unitary_price, 4), 2), unit  # TODO: Warning!!! floats are not precise
 
     def get_product_list_page(self):
-        '''
-        Get the HTML page which has the product list
-        '''
+        """Get the HTML page which has the product list"""
 
         session = requests.session()
 
@@ -114,9 +108,7 @@ class Eroski(Shop):
         return resp.text
 
     def parse_product_list_page(self, html_page):
-        '''
-        Parse the HTML page which has the product list and populate the product_dict
-        '''
+        """Parse the HTML page which has the product list and populate the product_dict"""
 
         html_tree = lxml.html.fromstring(html_page, parser=lxml.html.HTMLParser(encoding='utf-8'))
 

@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
-'''
-Created on 15/07/2012
+"""
+shops.mercadona
+~~~~~~~~~~~~~~~
 
-@author: jarf
-'''
+This module contains the class implementing the crawler for Mercadona.
+
+"""
 
 import re
 import requests
@@ -15,21 +17,19 @@ from product import Product
 
 
 class Mercadona(Shop):
-    '''
-    Mercadona crawler
-    '''
+    """Mercadona crawler"""
 
     def __init__(self, username, password, list_name, debug=False, verbose=False, fake=False):
-        '''
-        Constructor
-        '''
-
         Shop.__init__(self, debug=debug, verbose=verbose, fake=fake)
+        # Credentials to access to the shop
         self.username = username
         self.password = password
+        # Name of the product's list to be parsed as named in the server
         self.list_name = list_name
 
     def normalize_unitary_price(self, unitary_price, unit):
+        """Change units used by the sop to a common (normalized) set of units to be used internally"""
+
         if unit == '1 KILO':
             return unitary_price, 'kg'
         elif unit == '1 LITRO':
@@ -46,9 +46,7 @@ class Mercadona(Shop):
             raise ValueError('Non recognized measurement unit')
 
     def get_unitary_price(self, price, name):
-        '''
-        Try to get the units, weight, capacity, etc. from the product name and calculate the unitary price
-        '''
+        """Try to get the units, weight, capacity, etc. from the product name and calculate the unitary price"""
 
         result = re.search(r'.* (\d+) (l|cc)', name)
         amount, unit = result.group(1, 2)
@@ -61,12 +59,10 @@ class Mercadona(Shop):
         else:
             raise ValueError('Non recognized measurement unit')
 
-        return round(round(unitary_price, 4), 2), unit
+        return round(round(unitary_price, 4), 2), unit  # TODO: Warning!!! floats are not precise
 
     def get_product_list_page(self):
-        '''
-        Get the HTML page which has the product list
-        '''
+        """Get the HTML page which has the product list"""
 
         session = requests.session()
 
@@ -102,9 +98,7 @@ class Mercadona(Shop):
         return resp.text
 
     def parse_product_list_page(self, html_page):
-        '''
-        Parse the HTML page which has the product list and populate the product_dict
-        '''
+        """Parse the HTML page which has the product list and populate the product_dict"""
 
         html_tree = lxml.html.fromstring(html_page, parser=lxml.html.HTMLParser(encoding='utf-8'))
 

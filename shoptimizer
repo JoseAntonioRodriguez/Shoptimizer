@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-'''
-Created on 15/07/2012
+"""
+shoptimizer
+~~~~~~~~~~~
 
-@author: jarf
-'''
+This module contains the Shoptimizer main script.
+
+"""
 
 
 import sys
@@ -24,6 +26,8 @@ from shops.eroski import Eroski
 
 
 def parse_args():
+    """Parse command line arguments"""
+
     parser = argparse.ArgumentParser(description=textwrap.dedent('''\
                                         Shoptimizer compares prices among several on-line supermarkets
                                         and export the results to an Open Document spreadsheet file (.ods).
@@ -65,6 +69,8 @@ def parse_args():
 
 
 def export_ods(master_product_list, shop_list, ods_filename):
+    """Export the product_dict data to a ODS file, using simpleodspy package."""
+
     COLS_PER_PRODUCT = 4
 
     table = SodsSpreadSheet(len(master_product_list), 1 + COLS_PER_PRODUCT * len(shop_list))
@@ -115,13 +121,14 @@ def main():
     # Parse CLI arguments
     args = parse_args()
 
-    # Create a list of supermarket objects
+    # Get from environment which shops must be faked
     try:
         fake = os.environ["SHOPTIMIZER_FAKE"]
         fake = fake.split(';')
     except:
         fake = []
 
+    # Create a list of supermarket objects
     shop_list = []
     shop_list.append(Mercadona(username=args.mercadona_info[0], password=args.mercadona_info[1],
                                list_name=args.mercadona_info[2], debug=True, verbose=True, fake='mercadona' in fake))
